@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<META http-equiv="Content-Type" content="text/html; charset=TIS-620">
+
+	<head>
+		<link href="<?=base_url()?>assets\css\style.css" rel="stylesheet" type="text/css" />
+		<style>
+			p {text-indent: 35px;}
+		</style>
+	</head>
+		<div id="header">
+				 <table border="0" bordercolor="#FF0000" cellpadding="0" cellspacing="3"  width="700" >
+					   <tr>
+							  <td width="20%"><img src = "img/ob-voc.png" width="140" height="40" ><td>
+							  <td width="80%"><font size = "5"><b>ONEBIT MATTER CO., LTD.</b></font></td>
+					   </tr>
+					   <tr>
+								<td width="20%"><td>
+								<td width="80%"><font size = "2"><b>48/5-6 SPACE 48 Bldg., 7rd Fl., Ratchadaphisek Rd., Samsennok, Huaykwang, Bangkok 10310</b></font></td>
+					   </tr>
+					   <tr>
+								<td width="20%"><td>
+								<td width="80%"><font size = "2"><b>TEL. 0-2276-3308  FAX. 0-2276-3808</b></font></td>
+					   </tr>
+					   <tr>
+								<td width="20%"><td>
+								<td width="80%"><font size = "2"><b>Tax Registration NO.0105554003256</b></font></td>
+					   </tr>
+				  </table>
+			</div>	
+			<hr>
+			<br>
+			<br>
+				<div id ="topic"><b>หนังสือรับรองเงินเดือน</b></div><br><br>
+				<div id="date">วันที่  <?php echo $date;?></div><br>
+				<div id="section1">
+					<p>โดยหนังสือฉบับนี้  <font color="#C25012"><B><U>บริษัท วันบิต แมทเทอร์ จำกัด</U></B></font>  ตั้งอยู่บ้านเลขที่ <?php echo $address;?></p>
+				</div>
+				<div id="section1">
+							<p><?php echo "ขอรับรองว่า "?><font color="#C25012"><B><U><?php echo $employee[0]->name_thai." ".$employee[0]->lastname_thai?></U></B></font><?php echo" เป็นพนักงานของบริษัท ฯ  ปฏิบัติงานในตำแหน่ง  ".$employee[0]->position_thai." ซึ่งปัจจุบันรับเงินเดือน เดือนละ  ".$employee[0]->salary." บาท (".$thai_salary.") โดยได้บรรจุเข้าทำงาน ตั้งแต่วันที่ ".$firstday." ".$firstmonth." ".$firstyear." จนถึง ".$lastday;?></p>					
+				</div>
+				<div id="section1">
+				<p>ขอรับรองว่าข้อความข้างต้น  เป็นความจริงทุกประการ</p>
+				</div>
+				<br><br>
+				<div id="section1">
+				<table border="0" bordercolor="#FF0000" cellpadding="0" cellspacing="3"  width="700" >
+				 <tr>
+							  <td width="50%"><td>
+							  <td width="50%" align="center" > ขอแสดงความนับถือ<br><br><br><br><br><td>
+				</tr>
+				<tr>
+							  <td width="50%"><td>
+							  <td width="50%" align="center">………………………………………………………………..<br><br><br><td>
+				</tr>
+				<tr>
+							  <td width="50%"><td>
+							  <td width="50%" align="center">(    <?php echo $name_manager;?>    )<td><br>
+				</tr>
+				<tr>
+							  <td width="50%"><td>
+							  <td width="50%" align="center"><?php echo $position_manager;?><td>
+				</tr>
+				 </table>
+				 </div>
+				 <br>
+				 <br>
+				 <div id="section1">
+				<table border="0" bordercolor="#FF0000" cellpadding="0" cellspacing="16"  width="700" >
+				<tr>
+					<td align="left">ติดต่อสอบถาม</td>
+				</tr>
+				</table>
+				</div>
+				<div id="section1">
+				<table border="0" bordercolor="#FF0000" cellpadding="0" cellspacing="16"  width="700" >
+				<tr>
+					<td align="left"><?php echo $faction;?></td>
+				</tr>
+				</table>
+				</div><?php exit(); ?>
+</html>

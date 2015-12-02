@@ -1,0 +1,26 @@
+<?php
+
+	function fulladdress_company()
+	{
+		$ci = get_model();
+		$data['company'] = $ci->company->get_company();
+		$blank = " ";
+		foreach ( $data['company'] as $get )
+		{
+			$address = $get->address;
+			$amphur = $get->amphur;
+			$locality = $get->locality;
+			$province = $get->province;
+			$postcode = $get->postcode;
+			$tel = $get->tel;
+			$fulladdress['fulladdress'] = $address.$blank.$amphur.$blank.$locality.$blank.$province.$blank.$postcode.$blank."โทรศัพท์ ".$tel;
+			if( $get->fax != "")
+			{
+				$fax = $get->fax;
+				$fulladdress['fulladdress'] = $fulladdress['fulladdress'].$blank."แฟกซ์ ".$fax;
+			}
+			
+			$id['id'] = $get->id;
+			$ci->db->where('id',$id['id'])->update('company',$fulladdress);
+		}
+	}

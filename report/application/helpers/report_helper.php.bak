@@ -1,0 +1,626 @@
+<?php
+class report extends CI_Controller{
+    
+    public function __construct() 
+	{
+        parent::__construct();
+		$this->load->model('report_model','report');
+        $this->load->library('mpdf/mpdf'); //โหลด Library โฟล์เดอร์ mpdf ตามด้วยชื่อไฟล์ mpdf ไม่    //ต้องมี .php นะครับ
+    }
+
+	public function home()
+	{
+		
+	}
+
+	public function dashboard()
+	{
+		$this->load->view('dashboard');
+	}
+
+	public function error()
+	{
+		$this->load->view('error');
+	}
+	public function form()
+	{
+		ini_set('memory_limit', '512M');
+		$data['district'] = $this->report->getdistrict();
+		$data['amphur'] = $this->report->getamphur();
+		$data['province'] = $this->report->getprovince();
+		$this->load->view('form',$data);
+	}
+	public function gallery()
+	{
+		$this->load->view('gallery');
+	}
+	public function login()
+	{
+		$this->load->view('login');
+	}
+	public function other()
+	{
+		$this->load->view('other');
+	}
+	
+	public function edit($id)
+	{
+		$data['cus'] = $this->db->where('id_cus',$id)->get('customer')->result();
+		$day = $data['cus'][0]->firstday_cus;
+		$day2 = $data['cus'][0]->lastday_cus;
+		$data['day'] = $this->get_day($day);
+		$data['month'] = $this->get_month_num($day);
+		$data['year'] = $this->get_year($day);
+		$data['lastday'] = $this->get_day($day2);
+		$data['lastmonth'] = $this->get_month_num($day2);
+		$data['lastyear'] = $this->get_year($day2);
+		$this->load->view('edit',$data);
+	}
+	public function choice($id)
+	{
+		$data['cus'] = $this->db->where('id_cus',$id)->get('customer')->result();
+		$this->load->view('choice',$data);
+	}
+	public function table()
+	{
+		$data['cus'] = $this->report->getcus();
+		$this->load->view('table',$data);
+	}
+        
+	public function generate_pdf($data)
+	{
+		$this->load->helper('url');
+		$mpdf=new mPDF('th','A4');
+		$mpdf->debug = true;
+		$getreport = $this->load->view("htmlpdf",$data, TRUE);
+			
+		$mpdf->WriteHTML($getreport);
+		$mpdf->Output();
+	}
+
+	public function get_information_pdf($id)
+	{
+		$data = $this->get_input($id);
+		$this->generate_pdf($data);
+	}
+
+	public function generate_pdf2($data)
+	{
+		$this->load->helper('url');
+		$mpdf=new mPDF('th','A4');
+		$mpdf->debug = true;
+		$getreport = $this->load->view("htmlpdf2",$data, TRUE);
+			
+		$mpdf->WriteHTML($getreport);
+		$mpdf->Output();
+	}
+
+	public function get_information_pdf2($id)
+	{
+		$data = $this->get_input($id);
+		$this->generate_pdf2($data);
+	}
+
+	public function generate_pdf3($data)
+	{
+		$this->load->helper('url');
+		$mpdf=new mPDF('th','A4');
+		$mpdf->debug = true;
+		$getreport = $this->load->view("htmlpdf3",$data, TRUE);
+			
+		$mpdf->WriteHTML($getreport);
+		$mpdf->Output();
+	}
+
+	public function get_information_pdf3($data)
+	{
+		$data['fulladdress_cus'] = $this->getfulladdress_cus($data['id']);
+		$data['apprentice'] = $this->apprentice($data['id']);
+		$this->generate_pdf3($data);
+	}
+	
+	public function generate_pdf4($data)
+	{
+		$this->load->helper('url');
+		$mpdf=new mPDF('th','A4');
+		$mpdf->debug = true;
+		$getreport = $this->load->view("htmlpdf4",$data, TRUE);
+			
+		$mpdf->WriteHTML($getreport);
+		$mpdf->Output();
+	}
+
+	public function get_information_pdf4($data)
+	{
+		$data['fulladdress_cus'] = $this->getfulladdress_cus($data['id']);
+		$get = $this->apprentice($data['id']);
+		$data['apprentice'] = $get['end'];
+		$data['end'] = $get['end2'];
+		$data['thairaise_salary_cus'] = $this->number_to_thai($data['cus'][0]->raise_salary_cus);
+		$this->generate_pdf4($data);
+	}
+
+	public function get_input_check($id)
+	{
+		$data['id'] = $id;
+		$data['address_com']  = $this->input->post('address_com');
+		$data['day_pdf']  = $this->input->post('day_pdf');
+		$data['month_pdf']  = $this->input->post('month_pdf');
+		$data['month_pdf'] = $this->monthnum_to_thai($data['month_pdf']);
+		$data['year_pdf']  = $this->input->post('year_pdf');
+		$data['name_mana']  = $this->input->post('name_mana');
+		$data['name_mana2']  = $this->input->post('name_mana2');
+		$data['witness']  = $this->input->post('witness');
+		$data['witness2']  = $this->input->post('witness2');
+		$data['position_mana']  = $this->input->post('position_mana');
+		$data['faction']  = $this->input->post('faction');
+		$check = $this->input->post('check');
+		$data = $this->get_data_pdf($data);
+		if($check == '1')
+		{
+			$this->get_information_pdf3($data);
+		}
+		else if($check == '2')
+		{
+			$this->get_information_pdf4($data);
+		}
+	}
+
+	public function get_input($id)
+	{
+		$data['id'] = $id;
+		$data['address_com']  = $this->input->post('address_com');
+		$data['day_pdf']  = $this->input->post('day_pdf');
+		$data['month_pdf']  = $this->input->post('month_pdf');
+		$data['month_pdf'] = $this->monthnum_to_thai($data['month_pdf']);
+		$data['year_pdf']  = $this->input->post('year_pdf');
+		$data['name_mana']  = $this->input->post('name_mana');
+		$data['name_mana2']  = $this->input->post('name_mana2');
+		$data['witness']  = $this->input->post('witness');
+		$data['witness2']  = $this->input->post('witness2');
+		$data['position_mana']  = $this->input->post('position_mana');
+		$data['faction']  = $this->input->post('faction');
+		$data = $this->get_data_pdf($data);
+		return($data);
+	}
+
+	public function get_data_pdf($data)
+	{
+		$data['cus'] = $this->db->where('id_cus',$data['id'])->get('customer')->result();
+		$day = $data['cus'][0]->firstday_cus;
+		$day2 = $data['cus'][0]->lastday_cus;
+		$data['day'] = $this->get_day($day);
+		$data['month'] = $this->get_month($day);
+		$data['year'] = $this->get_year($day);
+		$data['year'] = $this->gen_year($data['year']);
+		$data['thaisalary_cus'] = $this->number_to_thai($data['cus'][0]->salary_cus);
+		if(substr($day2,-10,-6) == "0000")
+		{
+			$data['last'] = 'ปัจจุบัน';	
+		}
+		else
+		{
+			$day3 = $this->get_day($day2);
+			$month = $this->get_month($day2);
+			$year = $this->get_year($day2);
+			$year = $this->gen_year($year);
+			$data['last'] = $day3." ".$month." ".$year;
+		}
+		return($data);
+	}
+	
+	public function get_info($id)
+	{
+		$this->getfulladdress_com();
+		$data['id'] = $id;
+		$data['mana'] = $this->report->getmana();
+		$data['fac'] = $this->report->getfaction();
+		$data['witness'] = $this->report->getcus();
+		$num1 = 0;
+		for( $num = count($data['mana']); $num >= 1; $num--)
+		{
+			if($data['mana'][$num1]->thainame_mana != "")
+			{
+				$name = $data['mana'][$num1]->thainame_mana;
+				$lastname = $data['mana'][$num1]->thailastname_mana;
+				$data['name_mana'][$num1] = $name." ".$lastname;
+			}
+			$num1++;
+		}
+		$num1 = 0;
+		for( $num = count($data['mana']); $num >= 1; $num--)
+		{
+			if($data['mana'][$num1]->position_mana != "")
+			{
+				$data['position_mana'][$num1] = $data['mana'][$num1]->position_mana;
+			}
+			$num1++;
+		}
+		$data['com'] = $this->report->getcom();
+		$data['cus'] = $this->db->where('id_cus',$data['id'])->get('customer')->result();
+		return($data);
+	}
+
+	public function select_information_pdf($id)
+	{
+		$data = $this->get_info($id);
+		$this->load->view('select_information_pdf',$data);
+	}
+
+	public function select_information_pdf2($id)
+	{
+		$data = $this->get_info($id);
+		$this->load->view('select_information_pdf2',$data);
+	}
+
+	public function select_information_pdf3($id)
+	{
+		$data = $this->get_info($id);
+		$this->load->view('select_information_pdf3',$data);
+	}
+
+
+
+
+	public function add_cus()
+	{
+		$ar = array(
+        'engname_cus' => $this->input->post('engname_cus'),
+		'englastname_cus'  => $this->input->post('englastname_cus'),
+		'thainame_cus'  => $this->input->post('thainame_cus'),
+		'thailastname_cus'  => $this->input->post('thailastname_cus'),
+		'id_card_cus'  => $this->input->post('id_card_cus'),
+		'address_cus'  => $this->input->post('address_cus'),
+		'amphur_cus'  => $this->input->post('amphur_cus'),
+		'locality_cus'  => $this->input->post('locality_cus'),
+		'province_cus' => $this->input->post('province_cus'),
+		'postcode_cus'  => $this->input->post('postcode_cus'),
+		'tel_cus'  => $this->input->post('tel_cus'),
+		'position_cus'  => $this->input->post('position_cus'),
+		'thaiposition_cus'  => $this->input->post('thaiposition_cus'),
+		'salary_cus'  => $this->input->post('salary_cus'),
+		'raise_salary_cus'  => $this->input->post('raise_salary_cus')
+		);
+		$day = $this->input->post('day_cus');
+		$month = $this->input->post('month_cus');
+		$year = $this->input->post('year_cus');
+		$firstday_cus = $year."-".$month."-".$day;
+		$ar['firstday_cus']  = $firstday_cus;
+		$this->report->savecus($ar);
+		redirect("index.php/report/table");	 
+	}
+
+	public function edit_cus($id)
+	{
+		$ar = array(
+        'engname_cus' => $this->input->post('engname_cus'),
+		'englastname_cus'  => $this->input->post('englastname_cus'),
+		'thainame_cus'  => $this->input->post('thainame_cus'),
+		'thailastname_cus'  => $this->input->post('thailastname_cus'),
+		'id_card_cus'  => $this->input->post('id_card_cus'),
+		'address_cus'  => $this->input->post('address_cus'),
+		'amphur_cus'  => $this->input->post('amphur_cus'),
+		'locality_cus'  => $this->input->post('locality_cus'),
+		'province_cus' => $this->input->post('province_cus'),
+		'postcode_cus'  => $this->input->post('postcode_cus'),
+		'thaiposition_cus'  => $this->input->post('thaiposition_cus'),
+		'tel_cus'  => $this->input->post('tel_cus'),
+		'position_cus'  => $this->input->post('position_cus'),
+		'salary_cus'  => $this->input->post('salary_cus'),
+		'raise_salary_cus'  => $this->input->post('raise_salary_cus')
+		);
+		$day = $this->input->post('day_cus');
+		$month = $this->input->post('month_cus');
+		$year = $this->input->post('year_cus');
+		$firstday_cus = $year."-".$month."-".$day;
+		$ar['firstday_cus']  = $firstday_cus;
+		$day2 = $this->input->post('lastday_cus');
+		$month2 = $this->input->post('lastmonth_cus');
+		$year2 = $this->input->post('lastyear_cus');
+		$lastday_cus = $year2."-".$month2."-".$day2;
+		$ar['lastday_cus']  = $lastday_cus;
+		$this->db->where("id_cus",$id)->update('customer',$ar); 
+		redirect("index.php/report/table");	 
+	}
+	
+	public function delete_cus($id)
+	{
+		$this->db->where("id_cus",$id)->delete("customer"); 
+		redirect("index.php/report/table");
+	}
+	
+	function gen_year($year)
+	{
+		$year = $year + 543;
+		return($year);
+	}
+	function get_year($year)
+	{
+		$year2 = substr($year,-10,-6);
+		return($year2);
+	}
+
+	function get_day($day)
+	{
+		$day2 = substr($day,-2);
+		return($day2);
+	}
+
+	function get_month($month)
+	{
+		$month2 = substr($month,-5,-3);
+		$month = $this->monthnum_to_thai($month2);
+		return($month);
+	}
+	function get_month_num($month)
+	{
+		$month2 = substr($month,-5,-3);
+		return($month2);
+	}
+
+	function monthnum_to_thai($month2)
+	{
+		if($month2 == '01')
+		{
+			$month = 'มกราคม';
+		}
+		else if($month2 == '02')
+		{
+			$month = 'กุมภาพันธ์';
+		}
+		else if($month2 == '03')
+		{
+			$month = 'มีนาคม';
+		}
+		else if($month2 == '04')
+		{
+			$month = 'เมษายน';
+		}
+		else if($month2 == '05')
+		{
+			$month = 'พฤษภาคม';
+		}
+		else if($month2 == '06')
+		{
+			$month = 'มิถุนายน';
+		}
+		else if($month2 == '07')
+		{
+			$month = 'พฤษภาคม';
+		}
+		else if($month2 == '08')
+		{
+			$month = 'สิงหาคม';
+		}
+		else if($month2 == '09')
+		{
+			$month = 'กันยายน';
+		}
+		else if($month2 == '10')
+		{
+			$month = 'ตุลาคม';
+		}
+		else if($month2 == '11')
+		{
+			$month = 'พฤศจิกายน';
+		}
+		else if($month2 == '12')
+		{
+			$month = 'ธันวาคม';
+		}
+		return($month);
+	}
+
+	function number_to_thai($number)
+	{
+		if(is_string($number))
+		{
+			$number = (double)$number;
+		}
+		//$digit=array('ศูนย์','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า','สิบ');
+		$num=array('','สิบ','ร้อย','พัน','หมื่น','แสน','','สิบ','ร้อย','พัน','หมื่น','แสน'); 
+		$number = explode(".",$number);
+		@$c_num[0]=$len=strlen($number[0]); 
+		@$c_num[1]=$len2=strlen($number[1]); $convert='';
+
+
+		$last_number_of_million_without_zero = false;
+
+		// find last number of million that is not zero
+		$last_million_index = false;
+		if($len > 6)
+		{
+			$million_str = substr($number[0],0,strlen($number[0])-6);
+			for($i=0;$i<strlen($million_str);$i++)
+			{
+				if($million_str[$i] > 0)
+				{
+					$last_million_index = $i;
+				}
+			}
+		}
+
+
+		//คิดจำนวนเต็ม 
+		for($n=0;$n< $len;$n++)
+		{
+			$digit=array('ศูนย์','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า','สิบ');
+	
+			$c_num[0]--;
+			//if(@$number[$n] == 0)$digit[$c_digit]=''; 
+	
+	
+			$c_digit=substr($number[0],$n,1);
+			if(($c_num[0]==0 || $c_num[0] == 6)&& $c_digit==1)
+			{
+				if($len == 7 && $c_num[0] == 6)
+				{
+					$digit[$c_digit]='หนึ่ง';
+				}
+				else
+				{
+					$digit[$c_digit]='เอ็ด';
+				}
+			}
+			if(($c_num[0]==0 || $c_num[0] == 6)&& $c_digit==2)$digit[$c_digit]='สอง'; 
+			if(($c_num[0]==1 || $c_num[0] == 7)&& $c_digit==2)$digit[$c_digit]='ยี่'; 
+			if(($c_num[0]==1 || $c_num[0] == 7)&& $c_digit==1)$digit[$c_digit]=''; 
+			if( $c_digit==0)$digit[$c_digit]=''; 
+			$convert.=$digit[$c_digit];
+			if( $c_digit!=0){ $convert.=$num[$c_num[0]]; }
+			if($last_million_index !== false && $last_million_index == $n)
+			{
+				$convert.="ล้าน";
+			}
+		} 
+		$convert .= 'บาท'; 
+		if(@$number[1]==''){ $convert .= 'ถ้วน'; } //คิดจุดทศนิยม 
+
+
+		for($n=0;$n< $len2;$n++)
+		{
+			$c_num[1]--; 
+			$c_digit=substr($number[1],$n,1);
+			
+			if($c_num[1]==0&& $c_digit==1)
+				$digit[$c_digit]='เอ็ด';
+			if($c_num[1]==0&& $c_digit==2)
+				$digit[$c_digit]='สอง'; 
+			if($c_num[1]==1&& $c_digit==2)
+				$digit[$c_digit]='ยี่';
+			if($c_num[1]==1&& $c_digit==1)
+				$digit[$c_digit]=''; 
+			if( $c_digit==0)
+				$digit[$c_digit]=''; 
+			
+			if($c_num[1]==0&& $c_digit==1 && $len2 == 1)
+			{
+				$convert.=''; 
+			}
+			else if($c_num[1]==0&& $c_digit==2 && $len2 == 1)
+			{
+				$convert.='ยี่'; 
+			}
+			else
+			{
+				$convert.=$digit[$c_digit]; 
+			}
+			
+			if( $c_digit!=0)
+			{ 
+				$convert.=$num[$c_num[1]];
+			} 
+		}
+	
+		if($len2 == 1)
+		{
+			$convert .= 'สิบ';
+		}
+		
+		if(@$number[1]!='')
+			$convert .= 'สตางค์'; 
+	return $convert.='';
+	}
+		
+	public function apprentice($id)
+	{
+		$data['cus'] = $this->db->where('id_cus',$id)->get('customer')->result();
+		$check = $data['cus'][0]->firstday_cus;
+		$day = strtotime("+4 week 2 days");
+		$now = strtotime("now");
+		$day = $day - $now;
+		$check = strtotime($check);
+		$get = $check + $day;
+		$get = date(Y."-".m."-".d,$get);
+		$day3 = $this->get_day($get);
+		$month = $this->get_month($get);
+		$year = $this->get_year($get);
+		$year = $this->gen_year($year);
+		$end['end'] = $day3." ".$month." ".$year;
+		$end['end2'] = $month." ".$year;
+		return($end);
+	}
+
+	public function check_apprentice()
+	{
+		$data['cus'] = $this->report->getcus();
+		for( $num = 0; $num < count($data); $num++)
+		{
+			$day = date(Y.m.d);
+			$check = $data['cus'][0]->firstday_cus;
+			$day = strtotime($day);
+			$check = strtotime($check);
+			$get = $day - $check;
+			$get = $get/86400;
+			if( $get >= 90 )
+			{
+			
+			}
+		}
+	}
+
+	public function get_apprentice($id)
+	{
+		$data['cus'] = $this->db->where('id_cus',$id)->get('customer')->result();
+		$data['cus']->salary_cus = $data['cus']->salary_cus + $data['cus']->raise_salary_cus;
+		$data['cus']->raise_salary_cus = "";
+		$data['cus']->firstday_cus = date("Y-m-d");
+		$this->db->where("id_cus",$id)->update('customer',$data);
+	}
+
+	public function getfulladdress_cus($id)
+	{
+		$data['cus'] = $this->db->where('id_cus',$id)->get('customer')->result();
+		$blank = " ";
+		foreach ( $data['cus'] as $get )
+		{
+			$address = $get->address_cus;
+			$amphur = $get->amphur_cus;
+			$locality = $get->locality_cus;
+			$province = $get->province_cus;
+			$postcode = $get->postcode_cus;
+			$tel = $get->tel_cus;
+			$fulladdress['fulladdress_cus'] = $address.$blank.$amphur.$blank.$locality.$blank.$province.$blank.$postcode.$blank."โทรศัพท์ ".$tel;
+			if( $get->fax_cus != "")
+			{
+				$fax = $get->fax_cus;
+				$fulladdress['fulladdress_cus'] = $fulladdress['fulladdress_cus'].$blank."แฟกซ์ ".$fax;
+			}
+			$this->db->where('id_cus',$id)->update('customer',$fulladdress);
+			return ($fulladdress['fulladdress_cus']);
+		}
+	}
+
+	public function getfulladdress_com()
+	{
+		$data['com'] = $this->report->getcom();
+		$blank = " ";
+		foreach ( $data['com'] as $get )
+		{
+			$address = $get->address_com;
+			$amphur = $get->amphur_com;
+			$locality = $get->locality_com;
+			$province = $get->province_com;
+			$postcode = $get->postcode_com;
+			$tel = $get->tel_com;
+			$fulladdress['fulladdress_com'] = $address.$blank.$amphur.$blank.$locality.$blank.$province.$blank.$postcode.$blank."โทรศัพท์ ".$tel;
+			if( $get->fax_com != "")
+			{
+				$fax = $get->fax_com;
+				$fulladdress['fulladdress_com'] = $fulladdress['fulladdress_com'].$blank."แฟกซ์ ".$fax;
+			}
+			
+			$id['id_com'] = $get->id_com;
+			$this->db->where('id_com',$id['id_com'])->update('company',$fulladdress);
+		}
+	}
+
+
+    public function show_ex1()
+	{
+		$this->load->view("ex1");
+	}
+
+
+}
+?>

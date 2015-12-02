@@ -1,0 +1,93 @@
+#section1 
+{
+   
+	width:650px;
+    float:left;
+    line-height: 20pt;
+	margin-left: 20px;
+	font-size:14px;
+	font-family:"BrowalliaUPC";
+	word-wrap: break-word;
+}
+#section6 
+{ 
+	
+    float:left;
+	text-align:left;
+    line-height: 20pt;
+	margin-left: 20px;
+	font-size:13px;
+	font-family:"Angsana New";
+	word-wrap: break-word;
+}
+#section7
+{
+	text-align:right;
+	font-size:13px;
+	font-family:"Angsana New";
+}
+
+#section2 
+{
+   
+	 text-align:right;
+	margin-right: 150px;
+}
+#section3 
+{
+   
+	 text-align:right;
+	margin-right: 102px;
+}
+#section4 
+{
+   
+	 text-align:right;
+	margin-right: 111px;
+}
+#section5 
+{
+   
+	 text-align:right;
+	margin-right: 150px;
+}
+#date
+{
+	text-align:right;
+	margin-right: 80px;
+	font-size:13px;
+	font-family:"BrowalliaUPC";
+}
+
+#topic
+{
+	text-align:center;
+	font-size:18px;
+	font-family:"BrowalliaUPC";
+
+}
+#topic2
+{
+	text-align:center;
+	font-size:14px;
+	font-family:"Angsana New";
+
+}
+#header
+{
+	/*margin-top:-50px;*/
+	padding-top: -25px;
+	line-height: 30pt;
+	font-size:14px;
+	font-family:"BrowalliaUPC";
+}
+#header2
+{
+	/*margin-top:-50px;*/
+	padding-top: -45px;
+	line-height: 15pt;
+	text-align:left;
+	margin-left: 130px;
+	font-size:10px;
+	font-family:"Angsana New";
+}

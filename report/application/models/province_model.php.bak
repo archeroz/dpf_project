@@ -1,0 +1,20 @@
+<?php class province_model extends CI_Model {     
+
+	public function _construct()
+	{
+		parent::__construct();
+	}
+	
+	public function getdistrict()
+	{
+		return $this->db->get("district")->result();
+	}
+	public function getamphur()
+	{
+		return $this->db->get("amphur")->result();
+	}
+	public function getprovince()
+	{
+		return $this->db->get("province")->result();
+	}
+}

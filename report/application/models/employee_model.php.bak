@@ -1,0 +1,48 @@
+<?php class employee_model extends CI_Model {     
+
+	public function _construct()
+	{
+		parent::__construct();
+	}
+	
+
+	
+
+	public function get_employee()
+	{
+		return $this->db->get("employee")->result();
+	}
+	public function get_manager()
+	{
+		return $this->db->get("manager")->result();
+	}
+	
+	public function get_faction()
+	{
+		return $this->db->get("faction")->result();
+	}
+
+	public function get_img()
+	{
+		return $this->db->get("exampleimage")->result();
+	}
+
+
+
+	
+	public function save_employee($ar = array())
+	{
+		$this->db->insert("employee",$ar);
+	}
+	
+
+	
+	public function clear_employee()
+	{
+		$this->db->truncate("employee")->result();
+	}
+
+
+
+} 
+?>

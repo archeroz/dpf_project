@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<table>
+<tr>
+    <th>ID</th>
+    <th>username</th>
+    <th>name</th>
+</tr>
+<?php foreach($query as $item):?>
+<tr>
+<td><?php echo $item['id']; ?></td>
+<td><?php echo $item['username']; ?></td>
+<td><?php echo $item['name']; ?></td>
+</tr>
+<?php endforeach;?>
+</table>
+ <li><a href="<?php echo site_url("index.php/search/")?>">back</a></li>
+</html>
